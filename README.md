@@ -10,7 +10,7 @@
 
 Dự án thực hiện trong kỳ thực tập 8 tuần ở vị trí **Data Analyst** tại một công ty giải pháp phân tích dữ liệu (02–08/2026).
 
-> ⚠️ Dữ liệu gốc, file Power BI và tài liệu nội bộ thuộc quyền sở hữu của đơn vị thực tập nên **không được công khai**. Repo này chỉ mô tả bài toán, quy trình, cách tiếp cận và kết quả ở mức tổng hợp.
+> ⚠️ Dữ liệu gốc, file Power BI và tài liệu nội bộ thuộc quyền sở hữu của đơn vị thực tập nên **không được công khai**. Repo này chỉ trình bày bài toán, quy trình, ảnh chụp dashboard và kết quả ở mức tổng hợp.
 
 ---
 
@@ -50,41 +50,87 @@ Mình rà 27 mục yêu cầu của tài liệu tổng quan và đối chiếu v
 
 ## 🔄 Quy trình thực hiện
 
-```
-Khảo sát yêu cầu ─► Làm sạch dữ liệu ─► Template ─► Data Dictionary ─► BRD ─► Dashboard Power BI ─► Kiểm thử
-```
+![Quy trình 7 bước](images/00_quy_trinh_7_buoc.png)
 
-| # | Bước | Sản phẩm |
-|---|---|---|
-| 1 | Đọc tài liệu, đối chiếu yêu cầu với dữ liệu | Bảng mapping 27 mục yêu cầu ↔ dữ liệu |
-| 2 | Hợp nhất 7 file tháng, chuẩn hóa cấu trúc | Bộ dữ liệu sạch thống nhất |
-| 3 | Thiết kế bố cục 8 báo cáo | Template (wireframe) R1–R8 |
-| 4 | Mô tả 42 trường gốc và 23 trường bổ sung | Data Dictionary (tên chuẩn, kiểu dữ liệu, % thiếu, lưu ý) |
-| 5 | Đặc tả yêu cầu nghiệp vụ cho từng báo cáo | BRD 8 sheet (điều kiện ràng buộc, bộ lọc, KPI, công thức) |
-| 6 | Power Query → mô hình hình sao → DAX → giao diện | Dashboard Power BI 8 trang |
-| 7 | Đối chiếu dashboard với giá trị tính độc lập bằng Python | **52 test case, tất cả Pass** |
+### Bước 1 – Khảo sát yêu cầu & dữ liệu gốc
+Đọc tài liệu tổng quan (27 mục yêu cầu), đối chiếu từng mục với dữ liệu hiện có để xác định phần nào làm được từ dữ liệu hải quan, phần nào cần dữ liệu ngoài. Mở 7 file dữ liệu theo tháng để nắm cấu trúc cột và phạm vi thời gian.
+
+<!-- Ảnh minh họa bước 1 (tùy chọn): bảng đối chiếu yêu cầu ↔ dữ liệu
+![Bảng đối chiếu yêu cầu](images/01_doi_chieu_yeu_cau.png) -->
+
+### Bước 2 – Làm sạch dữ liệu
+Hợp nhất 7 file thành một bảng thống nhất **101.977 dòng × 42 cột**, rà soát tên cột, kiểu dữ liệu, giá trị bất thường; tạo thêm các trường phân loại (nhóm sản phẩm, loại trái cây, khu vực thị trường).
+
+<!-- Ảnh minh họa bước 2 (tùy chọn): các bước xử lý trong Power Query
+![Power Query](images/02_power_query.png) -->
+
+### Bước 3 – Xây dựng template báo cáo
+Thiết kế danh mục 8 báo cáo và wireframe cho từng trang (bộ lọc, thẻ KPI, biểu đồ) để thống nhất bố cục trước khi viết yêu cầu chi tiết.
+
+![Danh mục báo cáo](images/01_danh_muc_bao_cao.png)
+![Template giao diện](images/02_template.png)
+
+### Bước 4 – Data Dictionary
+Mô tả 42 trường gốc + 23 trường bổ sung: tên chuẩn (VD `Trị giá USD → ValueUSD`), kiểu dữ liệu, tỷ lệ thiếu, lỗi phát hiện và trang báo cáo sử dụng.
+
+![Tỷ lệ thiếu dữ liệu](images/03_ty_le_thieu_du_lieu.png)
+
+### Bước 5 – BRD (Business Requirement Document)
+Đặc tả yêu cầu cho từng báo cáo: điều kiện ràng buộc, bộ lọc, KPI và công thức tính. Các chỉ tiêu chưa có ngưỡng định nghĩa được ghi chú chờ xác nhận thay vì tự suy diễn.
+
+![BRD](images/04_brd.png)
+
+### Bước 6 – Dashboard Power BI
+Power Query → mô hình dữ liệu hình sao → DAX measures → thiết kế giao diện 8 trang theo template (xem chi tiết phần Dashboard bên dưới).
+
+### Bước 7 – Kiểm thử
+52 test case bám BRD, đối chiếu từng thẻ KPI/biểu đồ với giá trị tính độc lập bằng Python (xem phần Kiểm thử bên dưới).
 
 ---
 
 ## 📊 Dashboard – 8 trang báo cáo
 
-| Mã | Báo cáo | Nội dung chính |
-|---|---|---|
-| R1 | Tổng quan xuất khẩu Juice | Kim ngạch, số tờ khai, số DN, số quốc gia, tăng trưởng MoM, Top 5 thị trường, cơ cấu sản phẩm |
-| R2 | Thị trường Hoa Kỳ | Kim ngạch, nhà nhập khẩu, sản phẩm mới / tăng nhanh / suy giảm |
-| R3 | Phân tích sản phẩm | Cơ cấu và xu hướng, phân nhóm theo tăng trưởng |
-| R4 | Thị trường xuất khẩu | Tỷ trọng theo quốc gia, ma trận sản phẩm × khu vực |
-| R5 | Nhà nhập khẩu Hoa Kỳ | Danh sách buyer tiềm năng, tần suất mua |
-| R6 | Giá xuất khẩu | Min, P25, Median, P75, Max, đơn giá bình quân gia quyền, phân bố giá |
-| R7 | Doanh nghiệp xuất khẩu | Thị phần, ma trận cạnh tranh, DN xuất sang Mỹ |
-| R8 | Logistics | Incoterms, phương tiện vận chuyển, tờ khai |
+Mỗi trang dùng chung 4 bộ lọc: **Tháng · Quốc gia · Nhóm sản phẩm · Đơn vị tính**, điều hướng qua menu bên trái.
 
-Mỗi trang dùng chung 4 bộ lọc: **Tháng · Quốc gia · Nhóm sản phẩm · Đơn vị tính**.
+### R1 – Tổng quan xuất khẩu Juice
+Kim ngạch, số tờ khai, số doanh nghiệp, số quốc gia, tăng trưởng MoM, Top 5 thị trường, cơ cấu nhóm sản phẩm.
 
-<!-- Thêm ảnh chụp dashboard (nhớ che tên doanh nghiệp / nhà nhập khẩu nếu có):
-![R1 – Tổng quan](images/r1_overview.png)
-![R2 – Thị trường Hoa Kỳ](images/r2_usa.png)
--->
+![R1 – Tổng quan](images/r1_tong_quan.jpg)
+
+### R2 – Phân tích thị trường Hoa Kỳ
+Kim ngạch sang Mỹ, nhà nhập khẩu, sản phẩm mới / tăng nhanh / suy giảm.
+
+![R2 – Thị trường Hoa Kỳ](images/r2_thi_truong_hoa_ky.jpg)
+
+### R3 – Phân tích sản phẩm
+Cơ cấu và xu hướng theo sản phẩm, phân nhóm theo tốc độ tăng trưởng.
+
+![R3 – Sản phẩm](images/r3_san_pham.jpg)
+
+### R4 – Phân tích thị trường xuất khẩu
+Tỷ trọng theo quốc gia, ma trận sản phẩm × khu vực.
+
+![R4 – Thị trường xuất khẩu](images/r4_thi_truong_xuat_khau.jpg)
+
+### R5 – Phân tích nhà nhập khẩu Hoa Kỳ
+277 nhà nhập khẩu, mức độ tập trung (Pareto), tần suất mua, khách mới vs. khách thường xuyên.
+
+![R5 – Nhà nhập khẩu Hoa Kỳ](images/r5_nha_nhap_khau.jpg)
+
+### R6 – Phân tích giá xuất khẩu
+Min, P25, Median, P75, Max, đơn giá bình quân gia quyền, phân bố giá.
+
+![R6 – Giá xuất khẩu](images/r6_gia_xuat_khau.jpg)
+
+### R7 – Phân tích doanh nghiệp xuất khẩu
+Thị phần, ma trận cạnh tranh, doanh nghiệp Việt Nam xuất sang Mỹ.
+
+![R7 – Doanh nghiệp xuất khẩu](images/r7_doanh_nghiep.jpg)
+
+### R8 – Phân tích logistics
+Điều kiện giao hàng (Incoterms), phương tiện vận chuyển, tờ khai.
+
+![R8 – Logistics](images/r8_logistics.jpg)
 
 ### Một số DAX measure tiêu biểu
 
@@ -121,6 +167,9 @@ Giá P25         = PERCENTILE.INC ( Fact_Export[UnitPriceUSD], 0.25 )
 ## ✅ Kiểm thử dữ liệu
 
 Mình không dừng ở việc "dashboard chạy được" mà kiểm tra để chắc chắn **số liệu đúng**:
+
+![Quy trình kiểm thử](images/05_quy_trinh_kiem_thu.png)
+
 - Viết **52 test case** bám theo BRD, từ 5 đến 8 case cho mỗi báo cáo.
 - Dùng **Python (pandas)** tính giá trị tham chiếu độc lập từ dữ liệu nguồn, áp dụng cùng bộ điều kiện lọc với dashboard.
 - Kiểm tra các tổ hợp bộ lọc đại diện: không lọc, lọc một chiều, lọc nhiều chiều và lọc cho kết quả rỗng.
