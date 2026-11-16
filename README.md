@@ -10,8 +10,6 @@
 
 Dự án thực hiện trong kỳ thực tập 8 tuần ở vị trí **Data Analyst** tại một công ty giải pháp phân tích dữ liệu (02–08/2026).
 
-> ⚠️ Dữ liệu gốc, file Power BI và tài liệu nội bộ thuộc quyền sở hữu của đơn vị thực tập nên **không được công khai**. Repo này chỉ trình bày bài toán, quy trình, ảnh chụp dashboard và kết quả ở mức tổng hợp.
-
 ---
 
 ## 📌 Bài toán kinh doanh
